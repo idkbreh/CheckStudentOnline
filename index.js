@@ -6,8 +6,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const session = require('express-session');
-const crypto = require('crypto');
+const expressSession = require('express-session');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
@@ -19,17 +18,10 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(flash());
 app.use(cookieParser());
 app.use(cors());
-app.use(session({
-  secret: 'Usw@@&!sdj233',
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: true,
-    maxAge: 1000 * 60 * 60 * 24 
-  }
-}));
+app.use(expressSession({ resave: false, saveUninitialized: false, secret: "Usw@@&!sdj233" }));
 
 // Database connect
 mongoose.connect(DBURL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
