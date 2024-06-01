@@ -3,6 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const Student = require('../models/Student');
 const CheckInHistory = require('../models/CheckInHistory');
+const ShirtCheckHistory = require('../models/ShirtCheckHistory');
 
 router.get('/', authMiddleware, async (req, res) => {
   res.render('index');
@@ -52,5 +53,38 @@ router.get('/api/history', authMiddleware, async (req, res) => {
   const history = await CheckInHistory.find(filter);
   res.json(history);
 });
+
+router.post('/api/shirtcheck', authMiddleware, async (req, res) => {
+    const { name, status } = req.body;
+    const student = await Student.findOne({ name });
+    if (student) {
+      const shirtCheckHistory = new ShirtCheckHistory({
+        name,
+        class: student.class,
+        shirtStatus: status,
+        date: new Date()
+      });
+      await shirtCheckHistory.save();
+      res.status(200).send('Shirt check recorded');
+    } else {
+      res.status(404).send('Student not found');
+    }
+  });
+
+  router.get('/shirthistory', authMiddleware, async (req, res) => {
+    res.render('shirthistory');
+  });
+
+  router.get('/api/shirthistory', authMiddleware, async (req, res) => {
+    const { name, startDate, endDate } = req.query;
+    const filter = {};
+  
+    if (name) filter.name = { $regex: name, $options: 'i' };
+    if (startDate) filter.date = { $gte: new Date(startDate) };
+    if (endDate) filter.date = { ...filter.date, $lte: new Date(endDate) };
+  
+    const history = await ShirtCheckHistory.find(filter);
+    res.json(history);
+  });
 
 module.exports = router;

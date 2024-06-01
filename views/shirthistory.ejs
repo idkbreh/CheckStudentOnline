@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Check-in History</title>
+  <title>Shirt Check History</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 </head>
@@ -12,12 +12,12 @@
         * {
             font-family: 'Kanit';
         }
-        .absent {
+        .improper {
             color: red;
         }
     </style>
   <div class="container">
-    <h1 class="my-4">ประวัติการเช็คชื่อ</h1>
+    <h1 class="my-4">ประวัติการเช็คเสื้อ</h1>
     <a href="/" class="btn btn-secondary my-4">CheckIn</a>
     <div class="row mb-4">
       <div class="col-md-4">
@@ -30,7 +30,7 @@
         <input type="date" id="end-date" class="form-control">
       </div>
       <div class="col-md-2">
-        <button class="btn btn-primary" onclick="fetchHistoryData()">ค้นหา</button>
+        <button class="btn btn-primary" onclick="fetchShirtHistoryData()">ค้นหา</button>
       </div>
     </div>
     <table class="table table-bordered">
@@ -39,12 +39,12 @@
           <th>ลำดับ</th>
           <th>ชื่อ</th>
           <th>ห้อง</th>
-          <th>เช็คชื่อ</th>
+          <th>สถานะเสื้อ</th>
           <th>วันที่</th>
           <th>เวลา</th>
         </tr>
       </thead>
-      <tbody id="history-list">
+      <tbody id="shirt-history-list">
       </tbody>
     </table>
   </div>
@@ -53,21 +53,21 @@
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
-    async function fetchHistoryData() {
+    async function fetchShirtHistoryData() {
       const name = document.getElementById('search-name').value;
       const startDate = document.getElementById('start-date').value;
       const endDate = document.getElementById('end-date').value;
 
-      const response = await fetch(`/api/history?name=${name}&startDate=${startDate}&endDate=${endDate}`);
+      const response = await fetch(`/api/shirthistory?name=${name}&startDate=${startDate}&endDate=${endDate}`);
       const history = await response.json();
-      const historyList = document.getElementById('history-list');
+      const historyList = document.getElementById('shirt-history-list');
 
       historyList.innerHTML = '';
       history.forEach((record, index) => {
         const checkInDate = new Date(record.date);
         const checkInTime = checkInDate.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' });
-        const isAbsent = record.checkInType === 'ไม่มา';
-        const rowClass = isAbsent ? 'absent' : '';
+        const isImproper = record.shirtStatus === 'ไม่เรียบร้อย';
+        const rowClass = isImproper ? 'improper' : '';
 
         const row = document.createElement('tr');
         row.className = rowClass;
@@ -75,7 +75,7 @@
           <td>${index + 1}</td>
           <td>${record.name}</td>
           <td>${record.class}</td>
-          <td>${record.checkInType}</td>
+          <td>${record.shirtStatus}</td>
           <td>${checkInDate.toLocaleDateString('th-TH')}</td>
           <td>${checkInTime}</td>
         `;
@@ -83,7 +83,7 @@
       });
     }
 
-    window.onload = fetchHistoryData;
+    window.onload = fetchShirtHistoryData;
   </script>
 </body>
 </html>

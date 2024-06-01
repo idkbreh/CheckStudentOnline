@@ -5,18 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Student List</title>
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <style>
-        * {
-            font-family: 'Kanit';
-        }
-    </style>
+  <style>
+    * {
+      font-family: 'Kanit';
+    }
+  </style>
   <div class="container">
     <h1 class="my-4">รายชื่อสามาชิกคณะสี</h1>
     <button class="btn btn-primary my-4" data-toggle="modal" data-target="#addStudentModal">Add Student</button>
     <a href="/history" class="btn btn-secondary my-4">View History</a>
+    <a href="/shirthistory" class="btn btn-secondary my-4">View shirt History</a>
     <table class="table table-bordered">
       <thead>
         <tr>
@@ -26,6 +27,7 @@
           <th>เลขที่</th>
           <th>บทบาท</th>
           <th>เช็คชื่อ</th>
+          <th>เสื้อ</th>
         </tr>
       </thead>
       <tbody id="student-list">
@@ -89,6 +91,10 @@
             <button class="btn btn-success" onclick="handleCheckIn('${student.name}', 'มา')">มา</button>
             <button class="btn btn-danger" onclick="handleCheckIn('${student.name}', 'ไม่มา')">ไม่มา</button>
           </td>
+          <td>
+            <button class="btn btn-success" onclick="handleShirtCheck('${student.name}', 'เรียบร้อย')">เรียบร้อย</button>
+            <button class="btn btn-danger" onclick="handleShirtCheck('${student.name}', 'ไม่เรียบร้อย')">ไม่เรียบร้อย</button>
+          </td>
         `;
         studentList.appendChild(row);
       });
@@ -105,6 +111,21 @@
           body: JSON.stringify({ name, type })
         });
         alert(`เช็คชื่อ ${name} ว่า ${type} สำเร็จ`);
+        fetchStudentData();  // Refresh the student list
+      }
+    }
+
+    async function handleShirtCheck(name, status) {
+      const isConfirmed = confirm(`แน่ใจนะว่าต้องการกดยืนยัน ${name} ว่า ${status}?`);
+      if (isConfirmed) {
+        await fetch('/api/shirtcheck', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ name, status })
+        });
+        alert(`เช็คเสื้อ ${name} ว่า ${status} สำเร็จ`);
         fetchStudentData();  // Refresh the student list
       }
     }
