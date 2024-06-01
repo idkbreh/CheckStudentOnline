@@ -1,3 +1,4 @@
+// index.js
 const express = require('express');
 const app = express();
 const flash = require('connect-flash');
@@ -6,7 +7,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const expressSession = require('express-session');
 require('dotenv').config();
 
 const PORT = process.env.PORT || 3000;
@@ -21,7 +21,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(flash());
 app.use(cookieParser());
 app.use(cors());
-app.use(expressSession({ resave: false, saveUninitialized: false, secret: "Usw@@&!sdj233" }));
 
 // Database connect
 mongoose.connect(DBURL, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {

@@ -1,9 +1,7 @@
 const authMiddleware = (req, res, next) => {
-  const password = process.env.APP_PASSWORD;
-  const providedPassword = req.query.password || req.body.password || req.session.password;
+  const token = req.cookies.auth_token;
 
-  if (providedPassword && providedPassword === password) {
-    req.session.password = providedPassword;
+  if (token === 'tester123') {
     next();
   } else {
     res.redirect('/login');

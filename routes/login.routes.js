@@ -11,7 +11,7 @@ router.post('/login', (req, res) => {
   const providedPassword = req.body.password;
 
   if (providedPassword && providedPassword === password) {
-    req.session.password = providedPassword;
+    res.cookie('auth_token', 'tester123');
     res.redirect('/');
   } else {
     res.redirect('/login?error=incorrect');
